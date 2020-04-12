@@ -38,7 +38,12 @@
       background: black;
     }
 
-    body > div, .active, .recovered, .deaths {
+    body > div:nth-child(2) {
+      margin-top: -1px;
+      height: calc(100% - 85px - 80px);
+    }
+
+    .active, .recovered, .deaths {
       height: 100%;
       position: relative;
     }
@@ -51,14 +56,16 @@
       font-family: 'Crash Numbering', Arial, Helvetica, sans-serif;
     }
 
-    .float{
+    .topbar, .bottombar{
       z-index: 100;
-      left:0;
-      top:0;
       padding: 1.5rem;
       width: 100%;
       height: auto;
       background: white;
+    }
+
+    .bottombar {
+      padding: 1rem .5rem;
     }
 
     #info {
@@ -66,8 +73,6 @@
       border-radius: 50%;
       width: 35px;
       height: 35px;
-      margin-top: -2.5px;
-      margin-right: 25px;
       filter: invert();
       background: white;
     }
@@ -77,23 +82,34 @@
       border: 3.5px solid black;
       height: 35px;
       padding: 0 10px;
-      margin-right: 25px;
       text-align: center;
       border-radius: 25px;
     }
     
     table td:first-of-type {
       text-align: left;
-      padding-right: 10px;
+      padding-right: 5px;
     }
 
     table td:nth-of-type(2) {
+      padding-right: 5px;
+    }
+
+    table td:not(:first-of-type) {
       text-align: right;
+    }
+
+    .red {
+      color: red;
+    }
+    
+    .green {
+      color: green;
     }
   </style>
 </head>
 <body>
-  <div class="float position-absolute">
+  <div class="topbar d-flex justify-content-around">
     <img id="info" data-toggle="tooltip" data-html="true" data-placement="top" title="<%- infoHtml %>" src="https://img.icons8.com/ios-glyphs/100/000000/info.png"/>
     <input id="input" list="countryList">
     <datalist id="countryList">
@@ -119,6 +135,12 @@
     <div class="deaths d-flex flex-row" data-fill="#ff6384" data-percentage="<%= deathsP %>">
       <h3 class="align-self-center"><%= String(deaths).replace(/(.)(?=(\d{3})+$)/g,'$1,') %></h3>
     </div>
+  </div>
+  <div class="bottombar">
+    <p class="m-0 align-self-center text-center">
+      All data is taken from <a style="font-size: 15px;" href="https://github.com/novelCOVID/API" target="_blank">novelCOVID</a><br>
+      Made with <img style="margin-top: -2px;" width="20" height="20" src="https://img.icons8.com/material-sharp/96/000000/like.png"/> by <a style="font-size: 15px;" href="https://www.github.com/puf17640" target="_blank">Julian Pufler</a> in Vienna
+    </p>
   </div>
   <script>
     $(()=> {

@@ -41,9 +41,12 @@ app.get('/', (req, res, next) => res.redirect('/global'))
 app.get('/:country', async (req, res, next) => { 
   const { country } = req.params
   let countries = (await api.countries({sort:'cases'})),
-      data = country.toLowerCase() === 'global' ? (await api.all()) : (await api.countries({country}))
+      data = country.toLowerCase() === 'global' ? (await api.all()) : (await api.countries({country})),
+      yesterday = country.toLowerCase() === 'global' ? (await api.yesterday.all()) : (await api.yesterday.countries({country}))
   !data.country && (data.country = 'Global')
   data["countries"] = countries
+  data["todayRecovered"] = data.recovered - yesterday.recovered
+  data["todayActive"] = data.active - yesterday.active
   data["activeP"] = parseFloat((data.active / data.cases * 100)).toFixed(2)
   data["recoveredP"] = parseFloat((data.recovered / data.cases * 100)).toFixed(2)
   data["deathsP"] = (100 - data.activeP - data.recoveredP).toFixed(2)
@@ -53,14 +56,17 @@ app.get('/:country', async (req, res, next) => {
       <tr>
         <td>Active</td>
         <td>${String(data.active).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+        <td class=${(data.todayActive >= 0 ? 'red':'green')}>${(data.todayActive >= 0 ? "+":"-")+String(data.todayActive).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
       </tr>
       <tr>
         <td>Recovered</td>
         <td>${String(data.recovered).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+        <td class=${(data.todayRecovered >= 0 ? 'green':'red')}>${(data.todayRecovered >= 0 ? "+":"-")+String(data.todayRecovered).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
       </tr>
       <tr>
         <td>Deaths</td>
         <td>${String(data.deaths).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
+        <td class=${(data.todayDeaths >= 0 ? 'red':'green')}>${(data.todayDeaths >= 0 ? "+":"-")+String(data.todayDeaths).replace(/(.)(?=(\d{3})+$)/g,'$1,')}</td>
       </tr>
     </tbody>
   </table>`
