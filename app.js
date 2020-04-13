@@ -4,8 +4,8 @@ const express = require('express'),
   app = express(),
   api = require('covidapi')
 
-if(dotenvconf.error || !process.env.NODE_ENV || !process.env.HTTP_PORT){
-  console.log('invalid environment variables, please fix your .env file')
+if(dotenvconf.error || !process.env.NODE_ENV || !process.env.HTTP_PORT || !process.env.SESSION_SECRET){
+  console.error('invalid environment variables, please fix your .env file')
   process.exit(-1)
 }
 
@@ -60,7 +60,7 @@ app.get('/:country', async (req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-  console.log(new Date().toISOString(), err)
+  console.error(new Date().toISOString(), err)
   res.locals.message = err.message
   res.locals.error = !isProduction ? err : {}
   res.status(err.status || 5e2).send({ error: err.message })
