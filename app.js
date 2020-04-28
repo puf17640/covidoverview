@@ -27,7 +27,7 @@ app.get('/', (req, res, next) => res.redirect('/global'))
 app.get('/:country', async (req, res, next) => { 
   const { country } = req.params
   let countries = (await api.countries({sort:'cases'})),
-      data = country.toLowerCase() === 'global' ? (await api.all()) : (await api.countries({country})),
+      data = country.toLowerCase() === 'global' ? (await api.all()) : countries.find(c => c.country.toLowerCase() === country.toLowerCase()),
       yesterday = country.toLowerCase() === 'global' ? (await api.yesterday.all()) : (await api.yesterday.countries({country}))
   !data.country && (data.country = 'Global')
   data["countries"] = countries
